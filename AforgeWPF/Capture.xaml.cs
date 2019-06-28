@@ -1,10 +1,12 @@
-﻿using AForge.Video.DirectShow;
+﻿using AForge.Video;
+using AForge.Video.DirectShow;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,7 +37,6 @@ namespace AforgeWPF
             {
                 int index = cmb_DevicesName.SelectedIndex;
                 cam=new VideoCaptureDevice(cameras[index].MonikerString);
-                sourcePlayer.VideoSource = cam;
                 btn_Capture.IsEnabled = false;
                 btn_OpenCam.IsEnabled = true;
             }
@@ -78,7 +79,8 @@ namespace AforgeWPF
         {
             try
             {
-                cam.Start();
+                VideoCaptureDevice source = new VideoCaptureDevice(cameras[cmb_DevicesName.SelectedIndex].MonikerString);
+                sourcePlayer.VideoSource = new AsyncVideoSource(source);
                 sourcePlayer.Start();
                 if (sourcePlayer.IsRunning)
                 {
@@ -108,11 +110,15 @@ namespace AforgeWPF
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (sourcePlayer.IsRunning)
-            {   // 停止视频
+            // 停止视频
                 sourcePlayer.SignalToStop();
-                sourcePlayer.WaitForStop();
-            }
+                for (int i = 0; (i < 50) && (sourcePlayer.IsRunning); i++)
+                {
+                    Thread.Sleep(100);
+                }
+                if(sourcePlayer.IsRunning)
+                    sourcePlayer.Stop();
+            
         }
     }
 }
