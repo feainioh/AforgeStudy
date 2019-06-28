@@ -1,0 +1,43 @@
+﻿<Window x:Class="AforgeWPF.Capture"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+        xmlns:aforge ="clr-namespace:AForge.Controls;assembly=AForge.Controls"
+        xmlns:local="clr-namespace:AforgeWPF"
+        mc:Ignorable="d"
+        Title="Capture" Height="450" Width="800"
+        Loaded="Window_Loaded" Closed="Window_Closed">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <ComboBox Name="cmb_DevicesName" MinWidth="300" HorizontalAlignment="Stretch"></ComboBox>
+            <Button Name="btn_ChooseDevice" Content="Choose" Click="Btn_ChooseDevice_Click"
+                    Margin="20,0,0,0"></Button>
+            <Button Name="btn_LoadPic" Margin="30,0,0,0" Content="Load Picture" Click="Btn_LoadPic_Click"></Button>
+        </StackPanel>
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <WindowsFormsHost>
+                <aforge:VideoSourcePlayer x:Name="sourcePlayer"></aforge:VideoSourcePlayer>
+            </WindowsFormsHost>
+            <Image Name="picture" Grid.Column="1"></Image>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="btn_OpenCam" Content="Open Camera" HorizontalAlignment="Center" IsEnabled="False" Click="Btn_OpenCam_Click"></Button>
+            <Button Grid.Column="1" Name="btn_Capture" Content="Capture" HorizontalAlignment="Center" IsEnabled="False" Click="Btn_Capture_Click"></Button>
+        </Grid>
+    </Grid>
+</Window>

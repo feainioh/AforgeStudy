@@ -1,5 +1,6 @@
 ﻿using AForge.Video.DirectShow;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -18,6 +19,7 @@ namespace AforgeWPF
 
         FilterInfoCollection cameras = null;
         VideoCaptureDevice cam = null;
+        Dictionary<int, string> cam_resource = new Dictionary<int, string>();
 
         public MainWindow()
         {
@@ -44,6 +46,11 @@ namespace AforgeWPF
                 {
                     sourcePlayer.VideoSource= new VideoCaptureDevice(cameras[0].MonikerString);
                     //cam.NewFrame += Cam_NewFrame;
+                    for(int i = 0; i < cameras.Count; i++)
+                    {
+                        cmb_Devices.Items.Add(cameras[i].Name);
+                    }
+                    cmb_Devices.SelectedIndex = 0;
                 }
                 else
                 {
@@ -76,7 +83,7 @@ namespace AforgeWPF
 
         private void Button_Capture_Click(object sender, RoutedEventArgs e)
         {
-            string filePath = @"E:\1";
+            string filePath = @"C:\1";
             string fileName = null;
             if (sourcePlayer.VideoSource == null) return;
             if (!Directory.Exists(filePath))

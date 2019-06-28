@@ -18,8 +18,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <wfi:WindowsFormsHost Grid.Row="0" Margin="5">
-                <aforge:VideoSourcePlayer x:Name="sourcePlayer" Width="300" Height="360">
-                </aforge:VideoSourcePlayer>
+                <aforge:VideoSourcePlayer x:Name="sourcePlayer" Width="360" Height="400"></aforge:VideoSourcePlayer>
             </wfi:WindowsFormsHost>
             <StackPanel Grid.Row="1" Orientation="Horizontal" Height="60" HorizontalAlignment="Stretch" >
                 <Button Name="button_Play" Height="40" Width="120" Margin="40,10,20,10" Click="Btn_OpenCamera_Click">
@@ -37,12 +36,7 @@
             </StackPanel>
         </Grid>
         <Grid Grid.Column="1">
-            <wfi:WindowsFormsHost>
-                <aforge:PictureBox Width="300" Name="af_pic">
-                    
-                </aforge:PictureBox>
-            </wfi:WindowsFormsHost>
-
+            <ComboBox Name="cmb_Devices" ItemsSource="{Binding LocationSource}" Width="200" VerticalAlignment="Top"></ComboBox>
         </Grid>
     </Grid>
 </Window>
