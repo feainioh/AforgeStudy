@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AforgeWPF"
         xmlns:aforge ="clr-namespace:AForge.Controls;assembly=AForge.Controls"
         mc:Ignorable="d"
-        Title="ViedoCaptureWindow" Height="450" Width="800">
+        Title="ViedoCaptureWindow" Height="450" Width="1200">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -17,6 +17,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Button Grid.Row="0" Grid.Column="0" Content="打开所有相机" x:Name="btn_Open" Margin="10" Click="Btn_Open_Click"/>
         <Button Grid.Row="0" Grid.Column="1" Content="开始录像" x:Name="btn_Start" Margin="10" Click="Btn_Start_Click"/>
@@ -24,6 +25,7 @@
         <Label Grid.Row="1" Grid.Column="0" Content="打开相机" x:Name="lb_PC" Margin="10" />
         <Label Grid.Row="1" Grid.Column="1" Content="打开相机" x:Name="lb_usb" Margin="10"/>
         <Label Grid.Row="1" Grid.Column="2" Content="打开相机" x:Name="lb_link" Margin="10" />
+        <local:AforgeCaputureControl Grid.Row="0" Grid.Column="3" Grid.RowSpan="3"></local:AforgeCaputureControl>
         <WindowsFormsHost Grid.Column="0" Grid.Row="2" Margin="10">
             <aforge:VideoSourcePlayer x:Name="sourcePlayer_PC" Width="640" Height="480"></aforge:VideoSourcePlayer>
         </WindowsFormsHost>

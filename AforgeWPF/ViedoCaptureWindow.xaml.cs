@@ -63,7 +63,14 @@ namespace AforgeWPF
                 for (int i = 0; i < videoDevices.Count; i++)
                 {
                     VideoCaptureDevice cap = new VideoCaptureDevice(videoDevices[i].MonikerString);
-                    cap.VideoResolution = cap.VideoCapabilities[0];
+                    foreach (var capability in cap.VideoCapabilities)
+                    {
+                        System.Drawing.Size s = new System.Drawing.Size(640, 480);
+                        if (capability.FrameSize.Equals(s))
+                        {
+                            cap.VideoResolution = capability;
+                        }
+                    }
 
                     list_Cam.Add(cap);
                 }

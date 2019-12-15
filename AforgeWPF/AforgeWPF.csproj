@@ -98,9 +98,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AforgeCaputureControl.xaml.cs">
+      <DependentUpon>AforgeCaputureControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViedoCaptureWindow.xaml.cs">
       <DependentUpon>ViedoCaptureWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="AforgeCaputureControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Capture.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -150,7 +157,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
