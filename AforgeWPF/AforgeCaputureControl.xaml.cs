@@ -31,8 +31,10 @@ namespace AforgeWPF
         private FilterInfoCollection cameras = null;
         private VideoCaptureDevice cam = null;
         private VideoFileWriter writer;     //写入到视频
+        List<System.Drawing.Size> list_Cap = new List<System.Drawing.Size>();
+        private int frameRate = 30;
 
-        private string _saveDir=@"D:\Video";
+        private string _saveDir = @"D:\Video";
         /// <summary>
         /// 保存目录
         /// </summary>
@@ -47,7 +49,11 @@ namespace AforgeWPF
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// 打开相机按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Btn_OpenDevice_Click(object sender, RoutedEventArgs e)
         {
             if ((string)btn_OpenDevice.Content == "打开相机")
@@ -58,15 +64,6 @@ namespace AforgeWPF
                     {
                         int index = cmb_DevicesName.SelectedIndex;
                         cam = new VideoCaptureDevice(cameras[index].MonikerString);
-                        //分辨率
-                        foreach (var capability in cam.VideoCapabilities)
-                        {
-                            if (capability.FrameSize.Width ==640&&capability.FrameSize.Height == 480)
-                            {
-                                cam.VideoResolution = capability;
-                                break;
-                            }
-                        }
                         if ((bool)cb_IsViedo.IsChecked)
                         {
                             if (!string.IsNullOrEmpty(txt_SaveDir.Text))
@@ -83,8 +80,19 @@ namespace AforgeWPF
                                 string path = string.Format(@"{0}\{1}.avi", txt_SaveDir.Text, DateTime.Now.ToString("yyyyMMddHHmmssfff"));
                                 //保存到本地
                                 writer = new VideoFileWriter();
+                                //分辨率和帧率
+                                frameRate = int.Parse(txt_FrameRate.Text);
+                                System.Drawing.Size videoCapabilities = list_Cap[cmb_VideoCapabilities.SelectedIndex];
+                                foreach (var capability in cam.VideoCapabilities)
+                                {
+                                    if (capability.FrameSize.Equals(videoCapabilities))
+                                    {
+                                        cam.VideoResolution = capability;
+                                        break;
+                                    }
+                                }
                                 //打开写入流                
-                                writer.Open(path, cam.VideoResolution.FrameSize.Width, cam.VideoResolution.FrameSize.Height, 30, (VideoCodec)3, 3000000);
+                                writer.Open(path, cam.VideoResolution.FrameSize.Width, cam.VideoResolution.FrameSize.Height, frameRate, (VideoCodec)3, 3000000);
                                 //开始录制
                                 sourcePlayer.NewFrame += SourcePlayer_NewFrame;
                                 lb_Msg.Content = "开始录像,保存地址:" + path;
@@ -119,16 +127,15 @@ namespace AforgeWPF
         }
 
         private void SourcePlayer_NewFrame(object sender, ref System.Drawing.Bitmap image)
-        {            
+        {
             writer.WriteVideoFrame(image);
             //image.Dispose();
-            Thread.Sleep(10);
+            Thread.Sleep(5);
         }
 
         private void Btn_ChooseDir_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog openFileDialog = new System.Windows.Forms.FolderBrowserDialog();  //选择文件夹
-
+            FolderBrowserDialog openFileDialog = new System.Windows.Forms.FolderBrowserDialog();  //选择文件夹
 
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -140,7 +147,9 @@ namespace AforgeWPF
         {
             try
             {
+                //获取保存路径
                 txt_SaveDir.Text = SaveDir;
+                //获取相机设备列表
                 cameras = new FilterInfoCollection(FilterCategory.VideoInputDevice);
                 if (cameras.Count > 0)
                 {
@@ -149,6 +158,16 @@ namespace AforgeWPF
                         cmb_DevicesName.Items.Add(cameras[i].Name);
                     }
                     cmb_DevicesName.SelectedIndex = 0;
+                    //设置分辨率
+                    cam = new VideoCaptureDevice(cameras[0].MonikerString);
+                    list_Cap.Clear();
+                    cmb_VideoCapabilities.Items.Clear();
+                    foreach (var capability in cam.VideoCapabilities)
+                    {
+                        cmb_VideoCapabilities.Items.Add(capability.FrameSize);
+                        list_Cap.Add(capability.FrameSize);
+                    }
+                    cmb_VideoCapabilities.SelectedIndex = 0;
                 }
             }
             catch (Exception ex)
@@ -173,5 +192,19 @@ namespace AforgeWPF
             lb_Msg.Content = "停止录像";
         }
         #endregion
+
+        private void Cmb_DevicesName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //设置分辨率
+            list_Cap.Clear();
+            cmb_VideoCapabilities.Items.Clear();
+            cam = new VideoCaptureDevice(cameras[cmb_DevicesName.SelectedIndex].MonikerString);
+            foreach (var capability in cam.VideoCapabilities)
+            {
+                cmb_VideoCapabilities.Items.Add(capability.FrameSize);
+                list_Cap.Add(capability.FrameSize);
+            }
+            cmb_VideoCapabilities.SelectedIndex = 0;
+        }
     }
 }

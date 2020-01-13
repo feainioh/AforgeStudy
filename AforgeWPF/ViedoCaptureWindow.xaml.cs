@@ -19,22 +19,10 @@ using AForge.Controls;
 using AForge.Video;
 using AForge.Video.DirectShow;
 using AForge.Video.FFMPEG;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AforgeWPF
 {
@@ -53,6 +41,7 @@ namespace AforgeWPF
         private bool is_record_video = false;   //是否开始录像
         List<VideoCaptureDevice> list_Cam = new List<VideoCaptureDevice>();
         private ScreenCaptureStream videoStreamer;
+        List<VideoCapabilities> list_Cap = new List<VideoCapabilities>();
 
         public ViedoCaptureWindow()
         {
@@ -60,20 +49,23 @@ namespace AforgeWPF
             videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
             if (videoDevices.Count > 0)
             {
+                cmb_VideoCapabilities.Items.Clear();
                 for (int i = 0; i < videoDevices.Count; i++)
                 {
                     VideoCaptureDevice cap = new VideoCaptureDevice(videoDevices[i].MonikerString);
                     foreach (var capability in cap.VideoCapabilities)
                     {
-                        System.Drawing.Size s = new System.Drawing.Size(640, 480);
-                        if (capability.FrameSize.Equals(s))
+                        if (!list_Cap.Contains(capability))
                         {
-                            cap.VideoResolution = capability;
-                        }
+                            list_Cap.Add(capability);
+                            cmb_VideoCapabilities.Items.Add(capability.FrameSize);
+                        }   
                     }
-
                     list_Cam.Add(cap);
                 }
+                cmb_VideoCapabilities.SelectedIndex = 0;
+                btn_Stop.IsEnabled = false;
+                btn_Start.IsEnabled = false;
             }
         }
 
@@ -90,26 +82,34 @@ namespace AforgeWPF
                 sourcePlayer_PC.Start();
                 sourcePlayer_Usb.Start();
                 sourcePlayer_Link.Start();
+
+                btn_Open.IsEnabled = false;
+                btn_Start.IsEnabled = true;
             }
         }
 
         private void Btn_Start_Click(object sender, RoutedEventArgs e)
         {
+            //帧率
+            int frameRate = int.Parse(txt_FrameRate.Text);
             if (sourcePlayer_PC.IsRunning && sourcePlayer_Link.IsRunning && sourcePlayer_Usb.IsRunning)
             {
                 writer = new VideoFileWriter();
                 //打开写入流                
-                writer.Open(@"D:\EmguCV\aaa.avi", list_Cam[0].VideoResolution.FrameSize.Width, list_Cam[0].VideoResolution.FrameSize.Height, 30, (VideoCodec)3, 3000000);
+                writer.Open(@"D:\EmguCV\aaa.avi", list_Cam[0].VideoResolution.FrameSize.Width, list_Cam[0].VideoResolution.FrameSize.Height, frameRate, (VideoCodec)3);
                 //开始录制
                 sourcePlayer_PC.NewFrame += SourcePlayer_PC_NewFrame;
                 writer1 = new VideoFileWriter();
                 //打开写入流
-                writer1.Open(@"D:\EmguCV\bbb.avi", list_Cam[2].VideoResolution.FrameSize.Width, list_Cam[2].VideoResolution.FrameSize.Height, 30, (VideoCodec)3, 3000000);
+                writer1.Open(@"D:\EmguCV\bbb.avi", list_Cam[2].VideoResolution.FrameSize.Width, list_Cam[2].VideoResolution.FrameSize.Height, frameRate, (VideoCodec)3);
                 sourcePlayer_Usb.NewFrame += SourcePlayer_Usb_NewFrame;
                 writer2 = new VideoFileWriter();
                 //打开写入流
-                writer2.Open(@"D:\EmguCV\ccc.avi", list_Cam[1].VideoResolution.FrameSize.Width, list_Cam[1].VideoResolution.FrameSize.Height, 30, (VideoCodec)3, 3000000);
+                writer2.Open(@"D:\EmguCV\ccc.avi", list_Cam[1].VideoResolution.FrameSize.Width, list_Cam[1].VideoResolution.FrameSize.Height, frameRate, (VideoCodec)3);
                 sourcePlayer_Link.NewFrame += SourcePlayer_Link_NewFrame;
+
+                btn_Start.IsEnabled = false;
+                btn_Stop.IsEnabled = true;
             }
         }
 
@@ -136,6 +136,27 @@ namespace AforgeWPF
             sourcePlayer_PC.Stop();
             sourcePlayer_Usb.Stop();
             sourcePlayer_Link.Stop();
+
+
+            btn_Stop.IsEnabled = false;
+            btn_Start.IsEnabled = true;
+        }
+
+        private void Cmb_VideoCapabilities_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            foreach(VideoCaptureDevice cam in list_Cam)
+            {
+                try
+                {
+                    //设置分辨率
+                    cam.VideoResolution = list_Cap[cmb_VideoCapabilities.SelectedIndex];
+                }
+                catch
+                {
+                    //设置默认分辨率
+                    cam.VideoResolution = list_Cap[0];
+                }
+            }
         }
     }
 }

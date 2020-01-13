@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -22,17 +23,23 @@
         <Button Grid.Row="0" Grid.Column="0" Content="打开所有相机" x:Name="btn_Open" Margin="10" Click="Btn_Open_Click"/>
         <Button Grid.Row="0" Grid.Column="1" Content="开始录像" x:Name="btn_Start" Margin="10" Click="Btn_Start_Click"/>
         <Button Grid.Row="0" Grid.Column="2" Content="停止录像" x:Name="btn_Stop" Margin="10" Click="Btn_Stop_Click"/>
-        <Label Grid.Row="1" Grid.Column="0" Content="打开相机" x:Name="lb_PC" Margin="10" />
-        <Label Grid.Row="1" Grid.Column="1" Content="打开相机" x:Name="lb_usb" Margin="10"/>
-        <Label Grid.Row="1" Grid.Column="2" Content="打开相机" x:Name="lb_link" Margin="10" />
-        <local:AforgeCaputureControl Grid.Row="0" Grid.Column="3" Grid.RowSpan="3"></local:AforgeCaputureControl>
-        <WindowsFormsHost Grid.Column="0" Grid.Row="2" Margin="10">
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
+            <TextBlock Text="帧率:" Margin="83,3,3,3"/>
+            <TextBox x:Name="txt_FrameRate" Text="11" Margin="3" Width="40"/>
+            <TextBlock Text="视频大小:" Margin="45,3,3,3"/>
+            <ComboBox x:Name="cmb_VideoCapabilities" Margin="3" Width="130" SelectionChanged="Cmb_VideoCapabilities_SelectionChanged"/>
+        </StackPanel>
+        <Label Grid.Row="2" Grid.Column="0" Content="打开相机" x:Name="lb_PC" Margin="10" />
+        <Label Grid.Row="2" Grid.Column="1" Content="打开相机" x:Name="lb_usb" Margin="10"/>
+        <Label Grid.Row="2" Grid.Column="2" Content="打开相机" x:Name="lb_link" Margin="10" />
+        <local:AforgeCaputureControl Grid.Row="0" Grid.Column="3" Grid.RowSpan="4"></local:AforgeCaputureControl>
+        <WindowsFormsHost Grid.Column="0" Grid.Row="3" Margin="10">
             <aforge:VideoSourcePlayer x:Name="sourcePlayer_PC" Width="640" Height="480"></aforge:VideoSourcePlayer>
         </WindowsFormsHost>
-        <WindowsFormsHost Grid.Column="1" Grid.Row="2" Margin="10">
+        <WindowsFormsHost Grid.Column="1" Grid.Row="3" Margin="10">
             <aforge:VideoSourcePlayer x:Name="sourcePlayer_Usb" Width="640" Height="480" ></aforge:VideoSourcePlayer>
         </WindowsFormsHost>
-        <WindowsFormsHost Grid.Column="2" Grid.Row="2" Margin="10">
+        <WindowsFormsHost Grid.Column="2" Grid.Row="3" Margin="10">
             <aforge:VideoSourcePlayer x:Name="sourcePlayer_Link" Width="640" Height="480" ></aforge:VideoSourcePlayer>
         </WindowsFormsHost>
     </Grid>
