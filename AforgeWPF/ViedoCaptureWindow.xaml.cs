@@ -50,6 +50,16 @@ namespace AforgeWPF
             if (videoDevices.Count > 0)
             {
                 cmb_VideoCapabilities.Items.Clear();
+                //获取基础分辨率
+                VideoCaptureDevice baseVideo = new VideoCaptureDevice(videoDevices[0].MonikerString);
+                foreach(var baseCap in baseVideo.VideoCapabilities)
+                {
+                    if (!list_Cap.Contains(baseCap))
+                    {
+                        list_Cap.Add(baseCap);
+                    }
+                }
+                //遍历剩余相机的分辨率
                 for (int i = 0; i < videoDevices.Count; i++)
                 {
                     VideoCaptureDevice cap = new VideoCaptureDevice(videoDevices[i].MonikerString);
@@ -115,6 +125,7 @@ namespace AforgeWPF
 
         private void SourcePlayer_Link_NewFrame(object sender, ref Bitmap image)
         {
+            //写入文件流
             writer2.WriteVideoFrame(image);
             Thread.Sleep(10);
         }
@@ -133,6 +144,7 @@ namespace AforgeWPF
 
         private void Btn_Stop_Click(object sender, RoutedEventArgs e)
         {
+            //停止摄像头
             sourcePlayer_PC.Stop();
             sourcePlayer_Usb.Stop();
             sourcePlayer_Link.Stop();
